@@ -12,6 +12,8 @@ const userSchema = new Schema({
   passwordHash: { type: String, required: true },
   role: { type: String, enum: ["ADMIN", "USER"], default: "USER" },
   createdAt: { type: Date, default: Date.now() },
+  comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
+  lists: [{ type: Schema.Types.ObjectId, ref: "MyList" }],
 });
 
 export const UserModel = model("User", userSchema);

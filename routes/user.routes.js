@@ -2,7 +2,7 @@ import express from "express";
 import { generateToken } from "../config/jwt.config.js";
 import isAuth from "../middlewares/isAuth.js";
 import attachCurrentUser from "../middlewares/attachCurrentUser.js";
-import { isAdmin } from "../middlewares/isAdmin.js";
+import { isAdmin } from "../middlewares/isAdmin.js"; // deletar?
 import { UserModel } from "../model/user.model.js";
 
 import bcrypt from "bcrypt";
@@ -42,6 +42,47 @@ userRouter.post("/signup", async (req, res) => {
     return res.status(500).json(err);
   }
 });
+
+userRouter.get("/profile", isAuth, attachCurrentUser, (req, res) => {
+  return res.status(200).json(req.currentUser);
+});
+
+// userRouter.get("/:userId", isAuth, async (req, res) => {
+//   // READ DETAILS TESTAR
+//   try {
+//     const user = await UserModel.findOne(
+//       { _id: req.params.userId },
+//       { passwordHash: 0 }
+//     ).populate("comments"); // CHECAR COMMENTS
+
+//     return res.status(200).json(user);
+//   } catch (err) {
+//     console.log(err);
+//     return res.status(500).json(Error);
+//   }
+// });
+
+userRouter.put("/", isAuth, attachCurrentUser, async (req, res) => {
+  // UPDATE  Tá certo "/" ?
+  try {
+    const updatedUser = await UserModel.findOneAndUpdate(
+      { _id: req.currentUser._id },
+      { ...req.body },
+      { new: true, runValidators: true }
+    );
+
+    delete updatedUser._doc.passwordHash; // por quê?
+
+    return res.status(200).json(updatedUser);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json(err);
+  }
+});
+
+// userRouter.delete(); // Não precisa ter delete
+
+// _____________________ ADMIN ?
 
 userRouter.post("/login", async (req, res) => {
   try {
