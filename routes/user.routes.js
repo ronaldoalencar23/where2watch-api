@@ -43,8 +43,11 @@ userRouter.post("/signup", async (req, res) => {
   }
 });
 
-userRouter.get("/profile", isAuth, attachCurrentUser, (req, res) => {
-  return res.status(200).json(req.currentUser);
+userRouter.get("/profile", isAuth, attachCurrentUser, async (req, res) => {
+  const user = await UserModel.findOne({ _id: req.currentUser._id })
+    .populate("comments")
+    .populate("lists");
+  return res.status(200).json(user);
 });
 
 // userRouter.get("/:userId", isAuth, async (req, res) => {
@@ -63,7 +66,7 @@ userRouter.get("/profile", isAuth, attachCurrentUser, (req, res) => {
 // });
 
 userRouter.put("/", isAuth, attachCurrentUser, async (req, res) => {
-  // UPDATE  Tá certo "/" ?
+  console.log(req.currentUser);
   try {
     const updatedUser = await UserModel.findOneAndUpdate(
       { _id: req.currentUser._id },

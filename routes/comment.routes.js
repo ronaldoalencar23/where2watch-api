@@ -6,12 +6,12 @@ import { UserModel } from "../model/user.model.js";
 
 const commentRouter = express.Router();
 
-commentRouter.post("/:titleId", isAuth, attachCurrentUser, async (req, res) => {
+commentRouter.post("/:id", isAuth, attachCurrentUser, async (req, res) => {
   try {
     const newComment = await CommentModel.create({
       ...req.body,
       user: req.currentUser._id,
-      title: req.params.titleId,
+      title: req.params.id,
     });
 
     await UserModel.findOneAndUpdate(

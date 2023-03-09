@@ -2,6 +2,7 @@ import express from "express";
 import attachCurrentUser from "../middlewares/attachCurrentUser.js";
 import { MyListModel } from "../model/myList.model.js";
 import isAuth from "../middlewares/isAuth.js";
+import { UserModel } from "../model/user.model.js";
 
 const myListRouter = express.Router();
 
@@ -12,6 +13,12 @@ myListRouter.post("/", isAuth, attachCurrentUser, async (req, res) => {
       ...req.body,
       user: req.currentUser._id,
     });
+
+    await UserModel.findOneAndUpdate(
+      { _id: req.currentUser._id },
+      { $push: { lists: newList._id } },
+      { new: true, runValidators: true }
+    );
 
     return res.status(200).json(newList);
   } catch (err) {
