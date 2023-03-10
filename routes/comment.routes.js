@@ -11,7 +11,7 @@ commentRouter.post("/:id", isAuth, attachCurrentUser, async (req, res) => {
     const newComment = await CommentModel.create({
       ...req.body,
       user: req.currentUser._id,
-      title: req.params.id,
+      // title: req.params.id,
     });
 
     await UserModel.findOneAndUpdate(
